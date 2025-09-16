@@ -38,7 +38,16 @@ def square(start, end):
 
 def circle(start, end):
     """Draw circle from start to end."""
+    up()
+    goto(start.x, start.y)
+    down()
+    begin_fill()
+
+    for count in range(50):
+        forward(end.x - start.x)
+        left(7.2)
     pass  # TODO
+"""Ángel Enrique Montes Pacheco"""
 
 
 def rectangle(start, end):
