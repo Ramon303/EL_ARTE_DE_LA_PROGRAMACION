@@ -49,9 +49,23 @@ def circle(start, end):
     pass  # TODO
 """Ángel Enrique Montes Pacheco"""
 
-
+"""Carlos Eduardo Arias Capetillo"""
 def rectangle(start, end):
     """Draw rectangle from start to end."""
+    '''Team member: Carlos Eduardo Arias Capetillo'''
+    up()
+    goto(start.x, start.y)
+    down()
+    begin_fill()
+
+    for count in range(4):
+        if count%2 == 0: # On even (ie horizontal) lines
+            forward(end.x - start.x)
+        else:
+            forward(end.y - start.y)
+        left(90)
+
+    end_fill()
     pass  # TODO
 
 """David Rangel"""
@@ -91,6 +105,7 @@ def store(key, value):
 def set_color(key):
     color(key,key)
     state['color'] = key
+    """Carlos Almaraz"""
 
 state = {'start': None, 'shape': line}
 setup(420, 420, 370, 0)
