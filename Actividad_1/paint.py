@@ -88,12 +88,16 @@ def store(key, value):
     """Store value in state at key."""
     state[key] = value
 
+def set_color(key):
+    color(key,key)
+    state['color'] = key
 
 state = {'start': None, 'shape': line}
 setup(420, 420, 370, 0)
 onscreenclick(tap)
 listen()
 onkey(undo, 'u')
+onkey(lambda: color('pink'), 'P')
 onkey(lambda: color('black'), 'K')
 onkey(lambda: color('white'), 'W')
 onkey(lambda: color('green'), 'G')
