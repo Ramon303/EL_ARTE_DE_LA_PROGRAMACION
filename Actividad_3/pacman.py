@@ -200,7 +200,7 @@ def change(x, y):
         aim.y = y
 
 
-# David Rangel Monsiváis Mundo nuevo
+# David Rangel Monsiváis Angel Enrique Montes Pacheco Mundo nuevo
 def valid2(point):
     """Return True if point is valid in tiles."""
     index = offset(point)

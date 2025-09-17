@@ -8,7 +8,9 @@ Exercises
 4. Change the snake to respond to mouse clicks.
 """
 
-from random import randrange
+
+import random
+from random import randrange, choice
 from turtle import *
 
 from freegames import square, vector
@@ -16,6 +18,8 @@ from freegames import square, vector
 food = vector(0, 0)
 snake = [vector(10, 0)]
 aim = vector(0, -10)
+fooddir = vector(10,0)
+foodspeed = 400
 obstacles = []
 
 def change(x, y):
@@ -28,17 +32,48 @@ def inside(head):
     """Return True if head inside boundaries."""
     return -200 < head.x < 190 and -200 < head.y < 190
 
+"""Angel Enrique Montes Pacheco"""
+def randcolor():
+    """Select a random color"""
+    color = ["green","blue","yellow","purple","black"]
+    random_color = random.choice(color)
+    return random_color
+
+skinSneak = randcolor()
+skinFood = randcolor()
+
+def skinSnakecolor(s,f):
+    if s != f:
+        return s
+    else:
+        s = randcolor()
+        skinSnakecolor(s,f)
+        return s
+    
+def skinFoodcolor(s,f):
+    if s != f:
+        return f
+    else:
+        f = randcolor()
+        skinFoodcolor(s,f)
+        return f
+
 
 """David Rangel Monsiváis"""
 def add_block():
     """Add a block (obstacle) at a random free position."""
-    new_block = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
-
-    # Evita que el bloque aparezca encima de la serpiente o de otro obstáculo
-    while new_block in snake or new_block in obstacles or new_block == food:
+    while True:
         new_block = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
+        # Compara coordenadas
+        conflict = False
+        for b in snake + obstacles + [food]:
+            if new_block.x == b.x and new_block.y == b.y:
+                conflict = True
+                break
+        if not conflict:
+            obstacles.append(new_block)
+            break
 
-    obstacles.append(new_block)
 
 """Modificado para add_block"""
 def move():
@@ -57,8 +92,12 @@ def move():
         print('Snake:', len(snake))
         food.x = randrange(-15, 15) * 10
         food.y = randrange(-15, 15) * 10
+        global timeDelay
 
         add_block()
+
+        if timeDelay > minTimeDelay: #Carlos Arias Capetillo 
+            timeDelay -= timeDecrement
 
     else:
         snake.pop(0)
@@ -66,16 +105,64 @@ def move():
     clear()
 
     for body in snake:
-        square(body.x, body.y, 9, 'black')
+        square(body.x, body.y, 9, skinSnakecolor(skinSneak,skinFood))
 
-    square(food.x, food.y, 9, 'green')
+    square(food.x, food.y, 9, skinFoodcolor(skinFood,skinSneak))
 
     for block in obstacles:
         square(block.x, block.y, 9, 'red')
 
     update()
-    ontimer(move, 100)
+    ontimer(move, timeDelay)
 
+timeDelay = 100
+timeDecrement = 5
+minTimeDelay = 50
+
+"""Carlos Almaraz Arrambide"""
+def snakemove():
+    """Move snake forward one segment."""
+    head = snake[-1].copy()
+    head.move(aim)
+
+    if not inside(head) or head in snake:
+        square(head.x, head.y, 9, 'red')
+        update()
+        return
+
+    snake.append(head)
+
+    if head == food:
+        print('Snake:', len(snake))
+        food.x = randrange(-15, 15) * 10
+        food.y = randrange(-15, 15) * 10
+    else:
+        snake.pop(0)
+    draw()
+    ontimer(snakemove, 100)  
+
+def foodmove():
+    global fooddir
+
+    if random.random() < 0.2:
+        fooddir = choice([vector(10,0), vector(-10,0), vector(0,10), vector(0,-10)])
+
+    next_food = food + fooddir
+    if inside(next_food):
+        food.move(fooddir)
+    else:
+        fooddir = choice([vector(10,5), vector(-10,5), vector(5,10), vector(5,-10)])
+    draw()
+    ontimer(foodmove,foodspeed)
+
+
+def draw():
+    clear()
+    for body in snake:
+        square(body.x, body.y, 9, 'black')
+
+    square(food.x, food.y, 9, 'green')
+    update()
 
 setup(420, 420, 370, 0)
 hideturtle()
@@ -85,5 +172,7 @@ onkey(lambda: change(10, 0), 'Right')
 onkey(lambda: change(-10, 0), 'Left')
 onkey(lambda: change(0, 10), 'Up')
 onkey(lambda: change(0, -10), 'Down')
+snakemove()
+foodmove()
 move()
 done()
