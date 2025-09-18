@@ -10,12 +10,16 @@ Exercises
 
 from random import randrange
 from turtle import *
-
 from freegames import vector
 
 ball = vector(-200, -200)
 speed = vector(0, 0)
 targets = []
+
+# Variables de tiempo
+timeDelay = 50
+timeDecrement = 5   # cuánto se reduce el delay cada vez que aciertas
+minTimeDelay = 20   # delay mínimo permitido
 
 
 def tap(x, y):
@@ -49,6 +53,8 @@ def draw():
 
 def move():
     """Move ball and targets."""
+    global timeDelay
+
     if randrange(40) == 0:
         y = randrange(-150, 150)
         target = vector(200, y)
@@ -67,16 +73,20 @@ def move():
     for target in dupe:
         if abs(target - ball) > 13:
             targets.append(target)
+        else:  # el juego se hace más rápido cada vez que le pegas a un target
+            if timeDelay > minTimeDelay:
+                timeDelay -= timeDecrement
 
     draw()
 
-    """Este ciclo detiene el juego si y solo si la posición del objetivo es inferior a -200, por ello nada más en el mismo bucle, inicializamos el objetivo en una posición x anterior una nueva coordenada aleatoria en y"""
+    # Reposicionar objetivos fuera de la pantalla
     for target in targets:
         if not inside(target):
             target.x = 200
-            target.y = randrange(-175,175)
-    """Angel Enrique Montes Pacheco"""
-    ontimer(move, 50)
+            target.y = randrange(-175, 175)
+
+    # ahora usamos el delay actualizado
+    ontimer(move, timeDelay)
 
 
 setup(420, 420, 370, 0)
