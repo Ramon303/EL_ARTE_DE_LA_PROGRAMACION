@@ -70,10 +70,12 @@ def move():
 
     draw()
 
+    """Este ciclo detiene el juego si y solo si la posición del objetivo es inferior a -200, por ello nada más en el mismo bucle, inicializamos el objetivo en una posición x anterior una nueva coordenada aleatoria en y"""
     for target in targets:
         if not inside(target):
-            return
-
+            target.x = 200
+            target.y = randrange(-175,175)
+    """Angel Enrique Montes Pacheco"""
     ontimer(move, 50)
 
 
