@@ -15,7 +15,11 @@ from turtle import *
 from freegames import path
 
 car = path('car.gif')
-tiles = list(range(32)) * 2
+tiles = ['🍎','🍌','🍇','🍉','🍓','🍒','🥝','🍑',
+         '🐶','🐱','🐭','🐹','🐰','🦊','🐻','🐼',
+         '🚗','🚲','🚀','🚂','🛵','✈️','🚁','🚤',
+         '⚽','🏀','🏈','🎾','🎲','🎮','🎹','🎸'] * 2 #Cambiar de números  a objetos (David Rangel Monsiváis)
+
 state = {'mark': None}
 hide = [True] * 64
 
@@ -73,12 +77,26 @@ def draw():
     if mark is not None and hide[mark]:
         x, y = xy(mark)
         up()
-        goto(x + 2, y)
+
+        # Diccionario de ajustes verticales por emoji
+        emoji_fix = {
+            '✈️': -5,
+            '🚁': -5,
+            '🚀': -3,
+            '🚂': -2,
+        }
+
+        # Obtiene el ajuste si existe, sino 0
+        dy = emoji_fix.get(tiles[mark], 0)
+
+        goto(x + 25, y + 5 + dy)   # centrado horizontal y corregido vertical (David Rangel Monsiváis)
         color('black')
-        write(tiles[mark], font=('Arial', 30, 'normal'))
+        write(tiles[mark], align='center', font=('Segoe UI Emoji', 22, 'normal'))
 
     update()
     ontimer(draw, 100)
+
+
 
 
 shuffle(tiles)
