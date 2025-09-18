@@ -20,8 +20,11 @@ tiles = ['🍎','🍌','🍇','🍉','🍓','🍒','🥝','🍑',
          '🚗','🚲','🚀','🚂','🛵','✈️','🚁','🚤',
          '⚽','🏀','🏈','🎾','🎲','🎮','🎹','🎸'] * 2 #Cambiar de números  a objetos (David Rangel Monsiváis)
 
-state = {'mark': None}
+state = {'mark': None,'taps': 0}#taps (Carlos Almaraz)
 hide = [True] * 64
+
+
+
 
 
 def square(x, y):
@@ -51,14 +54,18 @@ def tap(x, y):
     """Update mark and hidden tiles based on tap."""
     spot = index(x, y)
     mark = state['mark']
+    
+    if 0 <= spot < len(tiles):
+        state['taps'] += 1
 
     if mark is None or mark == spot or tiles[mark] != tiles[spot]:
-        state['mark'] = spot
+        state['mark'] = spot #Carlos Almaraz
+        
     else:
         hide[spot] = False
         hide[mark] = False
         state['mark'] = None
-
+    #Agregue un if para guardar el contador
 
 def draw():
     """Draw image and tiles."""
@@ -93,6 +100,17 @@ def draw():
         color('black')
         write(tiles[mark], align='center', font=('Segoe UI Emoji', 22, 'normal'))
 
+        
+    up()
+    goto(-180,180)
+    color('red')
+    write(f"Taps: {state['taps']}", font=('Arial',14,'bold')) #Taps
+
+    if all(not h for h in hide):
+        up()
+        goto(-80, -200)
+        color('green')
+        write("¡Complete!", font=('Arial', 20, 'bold')) #Mostar complete cuando acabes el juego
     update()
     ontimer(draw, 100)
 
