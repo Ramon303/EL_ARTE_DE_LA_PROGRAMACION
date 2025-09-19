@@ -20,36 +20,6 @@ def change(x, y):
 def inside(head):
     return -200 < head.x < 190 and -200 < head.y < 190
 
-def randcolor():
-    return random.choice(["green", "blue", "yellow", "purple", "black"])
-
-def add_block():
-    tries = 0
-    while True:
-        tries += 1
-        new_block = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
-        conflict = False
-        for b in snake + obstacles + [food]:
-            if new_block.x == b.x and new_block.y == b.y:
-                conflict = True
-                break
-        if not conflict:
-            obstacles.append(new_block)
-            break
-        if tries > 200:
-            break
-
-def _sync_colors():
-    if len(snake_colors) < len(snake):
-        for _ in range(len(snake) - len(snake_colors)):
-            snake_colors.append(randcolor())
-    elif len(snake_colors) > len(snake):
-        extra = len(snake_colors) - len(snake)
-        del snake_colors[0:extra]
-
-timeDelay = 250
-timeDecrement = 15
-minTimeDelay = 50
 
 def move():
     global timeDelay, special_food
@@ -62,43 +32,12 @@ def move():
         return
 
     snake.append(head)
-
+"""Aquí esta la funcionalidad de cada comida, si aumenta 1 o si reduce 1 o 3, también verifica que no se encuentren en la misma posición"""
+"""Angel Enirque Montes Pacheco"""
     if head == food:
-        tries = 0
-        while True:
-            tries += 1
-            new_fx = randrange(-15, 15) * 10
-            new_fy = randrange(-15, 15) * 10
-            conflict = False
-            for b in snake + obstacles:
-                if new_fx == b.x and new_fy == b.y:
-                    conflict = True
-                    break
-            if not conflict:
-                food.x = new_fx
-                food.y = new_fy
-                break
-            if tries > 500:
-                break
-
-        # --- COMIDA ESPECIAL ---
-        if random.random() < 0.2:
-            special_food = True
-        else:
-            special_food = False
-
-        if special_food:
-            for _ in range(3):
-                snake_colors.append(randcolor())
-            special_food = False
-        else:
-            snake_colors.append(randcolor())
-        # ---------------------
-
-        add_block()
-
-        if timeDelay > minTimeDelay:
-            timeDelay = max(minTimeDelay, timeDelay - timeDecrement)
+        print('Snake:', len(snake))
+        food.x = randrange(-15, 15) * 10
+        food.y = randrange(-15, 15) * 10
     else:
         if len(snake) > 1:
             snake.pop(0)
@@ -114,18 +53,11 @@ def move():
             del snake_colors[0:extra]
 
     clear()
-    for body, color_seg in zip(snake, snake_colors):
-        square(body.x, body.y, 9, color_seg)
 
-    # --- Dibujar comida ---
-    if special_food:
-        square(food.x, food.y, 9, randcolor())
-    else:
-        square(food.x, food.y, 9, 'green')
+    for body in snake:
+        square(body.x, body.y, 9, 'black')
 
-    for block in obstacles:
-        square(block.x, block.y, 9, 'red')
-
+    square(food.x, food.y, 9, 'green')
     update()
     ontimer(move, timeDelay)
 
