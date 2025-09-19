@@ -12,6 +12,7 @@ aim = vector(0, -10)
 fooddir = vector(10, 0)
 foodspeed = 400
 obstacles = []
+
 cpu_snake = []            #NUEVO: variables del cpu
 cpu_aim = vector(10, 0)   
 cpu_active = False        
@@ -75,7 +76,7 @@ def add_block():
         tries += 1
         new_block = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
         conflict = False
-        for b in snake + obstacles + [food, boomFood, trashFood]:  # MODIFICADO: considerar comidas bomba
+        for b in snake + obstacles + [food, boomFood, trashFood]:  
             if new_block.x == b.x and new_block.y == b.y:
                 conflict = True
                 break
