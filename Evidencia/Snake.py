@@ -127,7 +127,7 @@ def move():
             if len(snake) > 3:
                 del snake[-4:]
             else:
-                square(head.x, head.y, 9, "red")
+                square(head.x, head.y, 9, "orange")
                 update()
                 return
             # mover boomFood a nueva posición
