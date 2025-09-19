@@ -7,11 +7,17 @@ from freegames import square, vector
 food = vector(0, 0)
 special_food = False  # NUEVO: comida especial que hace crecer 3 bloques
 snake = [vector(10, 0)]
-snake_colors = ["green"]  # lista paralela: color de cada segmento (misma longitud que `snake`)
+snake_colors = ["green"]  # lista paralela: color de cada segmento (misma longitud que snake)
 aim = vector(0, -10)
 fooddir = vector(10, 0)
 foodspeed = 400
 obstacles = []
+cpu_snake = []            #NUEVO: variables del cpu
+cpu_aim = vector(10, 0)   
+cpu_active = False        
+spawn_score = 5
+
+# NUEVO: variables para comidas bomba
 boomFood = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
 trashFood = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
 
@@ -23,6 +29,37 @@ def change(x, y):
 def inside(head):
     """Return True if head inside boundaries."""
     return -200 < head.x < 190 and -200 < head.y < 190
+
+"""Carlos Guillermo Almaraz Arrambide"""
+def move_cpu():
+    """Movimiento de la serpiente CPU"""
+    global cpu_aim
+
+    if not cpu_snake:
+        return
+
+    head = cpu_snake[-1].copy()
+
+    # Estrategia simple: moverse hacia la comida
+    if abs(food.x - head.x) > abs(food.y - head.y):
+        cpu_aim.x = 10 if food.x > head.x else -10
+        cpu_aim.y = 0
+    else:
+        cpu_aim.y = 10 if food.y > head.y else -10
+        cpu_aim.x = 0
+
+    head.move(cpu_aim)
+
+    if not inside(head) or head in cpu_snake:
+        return  # CPU muere si choca contra sí mismo o bordes
+
+    cpu_snake.append(head)
+
+    if head == food:
+        food.x = randrange(-15, 15) * 10
+        food.y = randrange(-15, 15) * 10
+    else:
+        cpu_snake.pop(0)
 
 """Angel Enrique Montes Pacheco"""
 def randcolor():
@@ -38,7 +75,7 @@ def add_block():
         tries += 1
         new_block = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
         conflict = False
-        for b in snake + obstacles + [food, boomFood, trashFood]:  
+        for b in snake + obstacles + [food, boomFood, trashFood]:  # MODIFICADO: considerar comidas bomba
             if new_block.x == b.x and new_block.y == b.y:
                 conflict = True
                 break
@@ -66,13 +103,13 @@ def _sync_colors():
 """Modificado para add_block, multicolor y comidas especiales"""
 def move():
     """Move snake forward one segment."""
-    global timeDelay, special_food
+    global timeDelay, special_food, cpu_active
     try:
         head = snake[-1].copy()
         head.move(aim)
 
         # choque con paredes, cuerpo u obstáculo
-        if not inside(head) or head in snake or head in obstacles:
+        if not inside(head) or head in snake or head in obstacles or head in cpu_snake:
             square(head.x, head.y, 9, 'red')
             update()
             return
@@ -82,6 +119,12 @@ def move():
         # --- lógica de comida normal y special_food ---
         if head == food:
             # mover comida a nueva posición libre
+            
+            # Activa la serpiente CPU
+            if len(snake) - 1 >= spawn_score and not cpu_active:
+                cpu_active = True
+                cpu_snake.append(vector(-100, 0))
+
             tries = 0
             while True:
                 tries += 1
@@ -172,6 +215,12 @@ def move():
             square(food.x, food.y, 9, randcolor())
         else:
             square(food.x, food.y, 9, 'green')
+
+        #serpiente cpu
+        if cpu_active:
+                move_cpu()
+                for body in cpu_snake:
+                    square(body.x, body.y, 9, 'blue')
 
         # comidas bomba
         square(boomFood.x, boomFood.y, 9, 'black')
