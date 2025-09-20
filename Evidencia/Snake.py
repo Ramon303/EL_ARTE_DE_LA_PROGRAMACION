@@ -16,6 +16,8 @@ cpu_snake = []            #NUEVO: variables del cpu
 cpu_aim = vector(10, 0)   
 cpu_active = False        
 spawn_score = 5
+bg_color = ["white", "lightgray", "lightcyan", "lightgoldenrod", "oldlace"]   #NUEVO: posibles colores de fondo
+
 
 # NUEVO: variables para comidas bomba
 boomFood = vector(randrange(-15, 15) * 10, randrange(-15, 15) * 10)
@@ -162,6 +164,9 @@ def move():
             prev = timeDelay
             if timeDelay > minTimeDelay:
                 timeDelay = max(minTimeDelay, timeDelay - timeDecrement)
+
+            # cambiar color del fondo
+            bgcolor(random.choice(bg_color))
 
         # --- lógica de comidas bomba ---
         elif head == boomFood:
